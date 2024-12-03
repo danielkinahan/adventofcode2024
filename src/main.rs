@@ -12,10 +12,17 @@ fn main() {
 
 fn day_three(path: &str) {
     let mut total: u32 = 0;
-    let re = Regex::new(r"mul\((\d+),(\d+)\)").unwrap();
+    let mut flag: bool = true;
+    let re = Regex::new(r"mul\((\d+),(\d+)\)()|()()(do(?:n't)?\(\))").unwrap();
     let input = read_to_string(path.to_owned() + "3").unwrap();
-    for (_, [x, y]) in re.captures_iter(&input).map(|m| m.extract()) {
-        total += x.parse::<u32>().unwrap() * y.parse::<u32>().unwrap();
+    for (_, [x, y, z]) in re.captures_iter(&input).map(|m| m.extract()) {
+        if z.is_empty() && flag {
+            total += x.parse::<u32>().unwrap() * y.parse::<u32>().unwrap();
+        } else if z == "don't()" {
+            flag = false;
+        } else if z == "do()" {
+            flag = true;
+        }
     }
     println!("{}", total);
 }
