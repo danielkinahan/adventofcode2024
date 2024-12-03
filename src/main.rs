@@ -1,3 +1,4 @@
+use regex::Regex;
 use std::env;
 use std::fs::read_to_string;
 
@@ -6,9 +7,20 @@ fn main() {
     let path = &args[1];
     day_one(path);
     day_two(path);
+    day_three(path);
 }
 
-fn day_two(path: &str) {
+fn day_three(path: &str) {
+    let mut total: u32 = 0;
+    let re = Regex::new(r"mul\((\d+),(\d+)\)").unwrap();
+    let input = read_to_string(path.to_owned() + "3").unwrap();
+    for (_, [x, y]) in re.captures_iter(&input).map(|m| m.extract()) {
+        total += x.parse::<u32>().unwrap() * y.parse::<u32>().unwrap();
+    }
+    println!("{}", total);
+}
+
+fn day_two(path: &str) -> u32 {
     let mut total: u32 = 0;
     for line in read_to_string(path.to_owned() + "2").unwrap().lines() {
         // Determine if consistently increasing or decreasing
@@ -17,11 +29,10 @@ fn day_two(path: &str) {
             .map(|s| s.parse::<u32>().unwrap())
             .collect();
         if is_report_safe(&report, false) {
-            println!("{:?} is safe", report);
             total += 1;
         }
     }
-    println!("{}", total)
+    total
 }
 
 fn is_report_safe(report: &Vec<u32>, problem_dampener_used: bool) -> bool {
@@ -52,7 +63,6 @@ fn is_report_safe(report: &Vec<u32>, problem_dampener_used: bool) -> bool {
                     let mut sub_report = report.clone();
                     sub_report.remove(j);
                     if is_report_safe(&sub_report, true) {
-                        println!("Sub-report found {:?}", sub_report);
                         found_subreport = true;
                         break;
                     }
