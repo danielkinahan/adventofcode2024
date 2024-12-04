@@ -1,6 +1,9 @@
 use regex::Regex;
-use std::env;
-use std::fs::read_to_string;
+use std::{
+    env,
+    fs::{read_to_string, File},
+    io::{prelude::*, BufReader},
+};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -8,9 +11,91 @@ fn main() {
     day_one(path);
     day_two(path);
     day_three(path);
+    println!("{}", day_four(path));
 }
 
-fn day_three(path: &str) {
+fn day_four(path: &str) -> u32 {
+    let mut total: u32 = 0;
+    let file = File::open(path.to_owned() + "4").expect("no such file");
+    let buf = BufReader::new(file);
+    let lines: Vec<String> = buf
+        .lines()
+        .map(|l| l.expect("Could not parse line"))
+        .collect();
+    for i in 0..lines.len() {
+        for j in 0..lines[0].len() {
+            if lines[i].chars().nth(j) == Some('X') {
+                // horizontal, vertical, diagonal, written backwards
+                // horizontal
+                if j + 3 < lines[0].len()
+                    && lines[i].chars().nth(j + 1) == Some('M')
+                    && lines[i].chars().nth(j + 2) == Some('A')
+                    && lines[i].chars().nth(j + 3) == Some('S')
+                {
+                    total += 1;
+                }
+                if !j.checked_sub(3).is_none()
+                    && lines[i].chars().nth(j - 1) == Some('M')
+                    && lines[i].chars().nth(j - 2) == Some('A')
+                    && lines[i].chars().nth(j - 3) == Some('S')
+                {
+                    total += 1;
+                }
+                // vertical
+                if i + 3 < lines.len()
+                    && lines[i + 1].chars().nth(j) == Some('M')
+                    && lines[i + 2].chars().nth(j) == Some('A')
+                    && lines[i + 3].chars().nth(j) == Some('S')
+                {
+                    total += 1;
+                }
+                if !i.checked_sub(3).is_none()
+                    && lines[i - 1].chars().nth(j) == Some('M')
+                    && lines[i - 2].chars().nth(j) == Some('A')
+                    && lines[i - 3].chars().nth(j) == Some('S')
+                {
+                    total += 1;
+                }
+                //diagonal
+                if i + 3 < lines.len()
+                    && j + 3 < lines[0].len()
+                    && lines[i + 1].chars().nth(j + 1) == Some('M')
+                    && lines[i + 2].chars().nth(j + 2) == Some('A')
+                    && lines[i + 3].chars().nth(j + 3) == Some('S')
+                {
+                    total += 1;
+                }
+                if i + 3 < lines.len()
+                    && !j.checked_sub(3).is_none()
+                    && lines[i + 1].chars().nth(j - 1) == Some('M')
+                    && lines[i + 2].chars().nth(j - 2) == Some('A')
+                    && lines[i + 3].chars().nth(j - 3) == Some('S')
+                {
+                    total += 1;
+                }
+                if !i.checked_sub(3).is_none()
+                    && !j.checked_sub(3).is_none()
+                    && lines[i - 1].chars().nth(j - 1) == Some('M')
+                    && lines[i - 2].chars().nth(j - 2) == Some('A')
+                    && lines[i - 3].chars().nth(j - 3) == Some('S')
+                {
+                    total += 1;
+                }
+                if !i.checked_sub(3).is_none()
+                    && j + 3 < lines[0].len()
+                    && lines[i - 1].chars().nth(j + 1) == Some('M')
+                    && lines[i - 2].chars().nth(j + 2) == Some('A')
+                    && lines[i - 3].chars().nth(j + 3) == Some('S')
+                {
+                    total += 1;
+                }
+            }
+        }
+    }
+    total
+}
+
+fn day_three(path: &str) -> u32 {
     let mut total: u32 = 0;
     let mut flag: bool = true;
     let re = Regex::new(r"mul\((\d+),(\d+)\)()|()()(do(?:n't)?\(\))").unwrap();
@@ -24,7 +109,7 @@ fn day_three(path: &str) {
             flag = true;
         }
     }
-    println!("{}", total);
+    total
 }
 
 fn day_two(path: &str) -> u32 {
