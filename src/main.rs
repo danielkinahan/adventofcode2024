@@ -24,70 +24,29 @@ fn day_four(path: &str) -> u32 {
         .collect();
     for i in 0..lines.len() {
         for j in 0..lines[0].len() {
-            if lines[i].chars().nth(j) == Some('X') {
+            if lines[i].chars().nth(j) == Some('A') {
                 // horizontal, vertical, diagonal, written backwards
                 // horizontal
-                if j + 3 < lines[0].len()
-                    && lines[i].chars().nth(j + 1) == Some('M')
-                    && lines[i].chars().nth(j + 2) == Some('A')
-                    && lines[i].chars().nth(j + 3) == Some('S')
+                if i + 1 < lines.len()
+                    && j + 1 < lines[0].len()
+                    && !i.checked_sub(1).is_none()
+                    && !j.checked_sub(1).is_none()
                 {
-                    total += 1;
-                }
-                if !j.checked_sub(3).is_none()
-                    && lines[i].chars().nth(j - 1) == Some('M')
-                    && lines[i].chars().nth(j - 2) == Some('A')
-                    && lines[i].chars().nth(j - 3) == Some('S')
-                {
-                    total += 1;
-                }
-                // vertical
-                if i + 3 < lines.len()
-                    && lines[i + 1].chars().nth(j) == Some('M')
-                    && lines[i + 2].chars().nth(j) == Some('A')
-                    && lines[i + 3].chars().nth(j) == Some('S')
-                {
-                    total += 1;
-                }
-                if !i.checked_sub(3).is_none()
-                    && lines[i - 1].chars().nth(j) == Some('M')
-                    && lines[i - 2].chars().nth(j) == Some('A')
-                    && lines[i - 3].chars().nth(j) == Some('S')
-                {
-                    total += 1;
-                }
-                //diagonal
-                if i + 3 < lines.len()
-                    && j + 3 < lines[0].len()
-                    && lines[i + 1].chars().nth(j + 1) == Some('M')
-                    && lines[i + 2].chars().nth(j + 2) == Some('A')
-                    && lines[i + 3].chars().nth(j + 3) == Some('S')
-                {
-                    total += 1;
-                }
-                if i + 3 < lines.len()
-                    && !j.checked_sub(3).is_none()
-                    && lines[i + 1].chars().nth(j - 1) == Some('M')
-                    && lines[i + 2].chars().nth(j - 2) == Some('A')
-                    && lines[i + 3].chars().nth(j - 3) == Some('S')
-                {
-                    total += 1;
-                }
-                if !i.checked_sub(3).is_none()
-                    && !j.checked_sub(3).is_none()
-                    && lines[i - 1].chars().nth(j - 1) == Some('M')
-                    && lines[i - 2].chars().nth(j - 2) == Some('A')
-                    && lines[i - 3].chars().nth(j - 3) == Some('S')
-                {
-                    total += 1;
-                }
-                if !i.checked_sub(3).is_none()
-                    && j + 3 < lines[0].len()
-                    && lines[i - 1].chars().nth(j + 1) == Some('M')
-                    && lines[i - 2].chars().nth(j + 2) == Some('A')
-                    && lines[i - 3].chars().nth(j + 3) == Some('S')
-                {
-                    total += 1;
+                    if (
+                        // Top left to bottom right
+                        (lines[i - 1].chars().nth(j - 1) == Some('M')
+                            && lines[i + 1].chars().nth(j + 1) == Some('S'))
+                            || (lines[i - 1].chars().nth(j - 1) == Some('S')
+                                && lines[i + 1].chars().nth(j + 1) == Some('M'))
+                    ) && (
+                        // Top right to bottom left
+                        (lines[i - 1].chars().nth(j + 1) == Some('M')
+                            && lines[i + 1].chars().nth(j - 1) == Some('S'))
+                            || (lines[i - 1].chars().nth(j + 1) == Some('S')
+                                && lines[i + 1].chars().nth(j - 1) == Some('M'))
+                    ) {
+                        total += 1;
+                    }
                 }
             }
         }
